@@ -42,8 +42,6 @@ function M.setup(opts)
     local gitBranch = getGitBranch()
     local sessionName = "git-branch-" .. gitBranch .. ".vim"
     local sessionDir = cwd .. "/" .. (rawget(opts, "sessionDir") or ".tmp")
-    print(sessionName)
-    print(sessionDir)
 
     local sessionFilePath = sessionDir .. "/" .. sessionName
     create_file_with_dir(sessionDir, sessionName)
