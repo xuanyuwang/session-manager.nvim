@@ -10,6 +10,13 @@ local function getGitBranch()
     return ""
 end
 
+local function getCWDName()
+    local cwd = vim.fn.getcwd()
+    -- local dir_name = vim.fn.fnamemodify(cwd, ":t") -- Get the last component of the path
+    local sanitized_path = cwd:lower():gsub("[/\\ ]", "-") -- Replace `/`, `\`, and spaces with `-`
+    return sanitized_path
+end
+
 local function fileIsExisting(filePath)
     local file = io.open(filePath, "r")
     if file then
@@ -38,10 +45,15 @@ local function create_file_with_dir(dir, filename)
 end
 
 function M.setup(opts)
-    local cwd = vim.fn.getcwd()
+    local cwdDir = getCWDName()
     local gitBranch = getGitBranch()
-    local sessionName = "git-branch-" .. gitBranch .. ".vim"
-    local sessionDir = cwd .. "/" .. (rawget(opts, "sessionDir") or ".tmp")
+    local sessionName = cwdDir .. "-git-branch-" .. gitBranch .. ".vim"
+    if gitBranch == "" then
+        sessionName = cwdDir .. ".vim"
+    end
+    local neovimDataDir = vim.fn.stdpath("data")
+    local pluginName = "session-manager"
+    local sessionDir = neovimDataDir .. "/" .. pluginName
 
     local sessionFilePath = sessionDir .. "/" .. sessionName
     create_file_with_dir(sessionDir, sessionName)
